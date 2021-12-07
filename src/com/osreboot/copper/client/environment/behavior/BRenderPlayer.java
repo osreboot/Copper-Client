@@ -20,7 +20,7 @@ public class BRenderPlayer extends BRender{
 	public void render(Environment environment, float delta, FRenderChannel channel){
 		if(channel == FRenderChannel.BASE_TERRAIN){
 			EPlayer player = environment.getEntitySingleton(EPlayer.class);
-			hvlDraw(hvlCirclec(player.location.x, player.location.y, 0.8f), Color.blue);
+			hvlDraw(hvlCirclec(player.location.x, player.location.y, 0.2f, 20), Color.blue);
 		}
 	}
 

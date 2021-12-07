@@ -12,7 +12,7 @@ public class EWorld extends Entity{
 	SCALE_Y = 0.866025403784f;
 	
 	public static final int
-	DIAMETER = 16,
+	DIAMETER = 64,
 	SIZE_X = DIAMETER * 2,
 	SIZE_Y = Math.round((float)DIAMETER / SCALE_Y);
 
