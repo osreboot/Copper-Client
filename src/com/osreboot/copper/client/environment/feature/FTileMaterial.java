@@ -4,12 +4,14 @@ import org.newdawn.slick.Color;
 
 public enum FTileMaterial {
 
-	ASTEROID(Color.gray);
+	PATHWAY(false, Color.darkGray),
+	ASTEROID(true, Color.gray);
 	
-	// TODO
+	public final boolean solid;
 	public final Color color;
 	
-	private FTileMaterial(Color colorArg){
+	private FTileMaterial(boolean solidArg, Color colorArg){
+		solid = solidArg;
 		color = colorArg;
 	}
 	
