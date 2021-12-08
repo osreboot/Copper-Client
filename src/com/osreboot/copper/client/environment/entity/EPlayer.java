@@ -8,6 +8,9 @@ import com.osreboot.ridhvl2.HvlCoord;
 public class EPlayer extends Entity{
 	private static final long serialVersionUID = 1L;
 
+	public static final float
+	RADIUS = 0.8f;
+	
 	public HvlCoord location, speed;
 	
 	public BRenderPlayer render;
@@ -17,7 +20,7 @@ public class EPlayer extends Entity{
 		location = new HvlCoord();
 		speed = new HvlCoord();
 		
-		render = new BRenderPlayer(environmentArg);
+		render = new BRenderPlayer(environmentArg, this);
 	}
 	
 	@Override

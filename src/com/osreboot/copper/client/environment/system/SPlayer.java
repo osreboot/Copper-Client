@@ -12,7 +12,7 @@ public final class SPlayer {
 	private SPlayer(){}
 	
 	public static final float
-	ACCELERATION = 7f;
+	ACCELERATION = 80f;
 	
 	public static void initialize(Environment environment){
 		
@@ -26,11 +26,10 @@ public final class SPlayer {
 		playerImpulse.x += Keyboard.isKeyDown(Keyboard.KEY_D) ? 1f : 0f;
 		playerImpulse.y -= Keyboard.isKeyDown(Keyboard.KEY_W) ? 1f : 0f;
 		playerImpulse.y += Keyboard.isKeyDown(Keyboard.KEY_S) ? 1f : 0f;
-		if(Keyboard.isKeyDown(Keyboard.KEY_X)) playerImpulse = new HvlCoord(player.speed).multiply(-1f);
+		if(Keyboard.isKeyDown(Keyboard.KEY_X)) playerImpulse = new HvlCoord(player.speed).multiply(-1f).normalize();
 		playerImpulse.x = HvlMath.limit(playerImpulse.x, 0f, new HvlCoord(playerImpulse).normalize().x);
 		playerImpulse.y = HvlMath.limit(playerImpulse.y, 0f, new HvlCoord(playerImpulse).normalize().y);
 		player.speed.add(playerImpulse.multiply(delta * ACCELERATION));
-		player.location.add(new HvlCoord(player.speed).multiply(delta));
 	}
 	
 }

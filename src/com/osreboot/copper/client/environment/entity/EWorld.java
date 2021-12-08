@@ -12,7 +12,7 @@ public class EWorld extends Entity{
 	SCALE_Y = 0.866025403784f;
 	
 	public static final int
-	DIAMETER = 64,
+	DIAMETER = 256,
 	SIZE_X = DIAMETER * 2,
 	SIZE_Y = Math.round((float)DIAMETER / SCALE_Y);
 
@@ -27,7 +27,7 @@ public class EWorld extends Entity{
 		super(environmentArg, EWorld.class);
 		tiles = new CTile[SIZE_X][SIZE_Y];
 		
-		render = new BRenderWorld(environmentArg);
+		render = new BRenderWorld(environmentArg, this);
 	}
 	
 	@Override

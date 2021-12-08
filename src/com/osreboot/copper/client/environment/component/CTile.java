@@ -7,6 +7,20 @@ import com.osreboot.ridhvl2.HvlCoord;
 
 public class CTile {
 
+	public static HvlCoord toTileSpace(HvlCoord entitySpaceArg){
+		HvlCoord output = new HvlCoord();
+		output.x = (entitySpaceArg.x - 0.25f) * 2f + ((float)EWorld.SIZE_X / 2f);
+		output.y = (entitySpaceArg.y / EWorld.SCALE_Y) - 0.5f + ((float)EWorld.SIZE_Y / 2f);
+		return output;
+	}
+
+	public static HvlCoord toEntitySpace(HvlCoord tileSpaceArg){
+		HvlCoord output = new HvlCoord();
+		output.x = (tileSpaceArg.x - ((float)EWorld.SIZE_X / 2f)) * 0.5f + 0.25f;
+		output.y = (tileSpaceArg.y - ((float)EWorld.SIZE_Y / 2f) + 0.5f) * EWorld.SCALE_Y;
+		return output;
+	}
+
 	public FTileMaterial material;
 
 	public final int x, y;
@@ -23,16 +37,14 @@ public class CTile {
 		x = xArg;
 		y = yArg;
 
-		origin = new HvlCoord();
-		origin.x = (x - ((float)EWorld.SIZE_X / 2f)) * 0.5f + 0.25f;
-		origin.y = (y - ((float)EWorld.SIZE_Y / 2f) + 0.5f) * EWorld.SCALE_Y;
-		
+		origin = toEntitySpace(new HvlCoord(x, y));
+
 		orientation = (x + y) % 2 == 0 ? FTileOrientation.UP_ARROW : FTileOrientation.DOWN_ARROW;
 
 		faceVert = false;
 		faceWest = false;
 		faceEast = false;
-		
+
 		vertices = new HvlCoord[3];
 		if(orientation == FTileOrientation.UP_ARROW){
 			vertices[0] = new HvlCoord(origin.x, origin.y - EWorld.SCALE_Y / 2f);
