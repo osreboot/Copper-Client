@@ -6,8 +6,8 @@ import java.util.Map;
 import com.osreboot.copper.client.TokenMetadata;
 import com.osreboot.copper.client.environment.WorldUtil;
 import com.osreboot.copper.client.environment.component.CTile;
-import com.osreboot.copper.client.forge.ambient.ProcessAmbientPlanet;
-import com.osreboot.copper.client.forge.primary.ProcessPrimaryTerrain;
+import com.osreboot.copper.client.forge.primary.ProcessPrimaryGrowAsteroids;
+import com.osreboot.copper.client.forge.primary.ProcessPrimarySeedAsteroids;
 
 public final class Forge {
 
@@ -15,14 +15,13 @@ public final class Forge {
 	
 	public static void run(TokenMetadata metadata, CTile[][] world){
 		@SuppressWarnings("unchecked")
-		Map<Tag, Double>[][] worldTags = new Map[world.length][world[0].length];
+		Map<ForgeTag, Double>[][] worldTags = new Map[world.length][world[0].length];
 		WorldUtil.loop2D(world, (x, y, t) -> {
 			worldTags[x][y] = new HashMap<>();
 		});
 		
-		ProcessAmbientPlanet.run(metadata, world, worldTags);
-		
-		ProcessPrimaryTerrain.run(metadata, world, worldTags);
+		ProcessPrimarySeedAsteroids.run(metadata, world, worldTags);
+		ProcessPrimaryGrowAsteroids.run(metadata, world, worldTags);
 	}
 	
 }

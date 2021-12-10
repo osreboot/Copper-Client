@@ -19,9 +19,6 @@ public final class Seed {
 
 	public void generate(Environment environment){
 		EWorld world = new EWorld(environment);
-		WorldUtil.loop2D(world.tiles, (x, y, t) -> {
-			world.tiles[x][y] = new CTile(x, y, FTileMaterial.PATHWAY);
-		});
 		
 		Forge.run(tokenMetadata, world.tiles);
 		

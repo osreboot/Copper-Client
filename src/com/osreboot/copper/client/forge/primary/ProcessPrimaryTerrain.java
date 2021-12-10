@@ -9,7 +9,7 @@ import com.osreboot.copper.client.environment.component.CTile;
 import com.osreboot.copper.client.environment.entity.EWorld;
 import com.osreboot.copper.client.environment.feature.FTileMaterial;
 import com.osreboot.copper.client.forge.ForgeUtil;
-import com.osreboot.copper.client.forge.Tag;
+import com.osreboot.copper.client.forge.ForgeTag;
 import com.osreboot.copper.client.forge.util.NoisePerlin;
 import com.osreboot.ridhvl2.HvlCoord;
 
@@ -17,7 +17,7 @@ public final class ProcessPrimaryTerrain {
 
 	private ProcessPrimaryTerrain(){}
 
-	public static void run(TokenMetadata metadata, CTile[][] world, Map<Tag, Double>[][] worldTags){
+	public static void run(TokenMetadata metadata, CTile[][] world, Map<ForgeTag, Double>[][] worldTags){
 		Random random = new Random(metadata.seedTerrain.hashCode());
 
 		HvlCoord w0 = new HvlCoord(-EWorld.DIAMETER / 2f, -EWorld.DIAMETER / 2f);

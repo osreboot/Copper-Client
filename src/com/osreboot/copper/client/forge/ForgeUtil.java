@@ -12,41 +12,48 @@ public final class ForgeUtil {
 
 	private ForgeUtil(){}
 
+	// TODO support dilation to null
 	public static void dilate(CTile[][] world, FTileMaterial mFrom, FTileMaterial mTo){
 		ArrayList<HvlCoord> toChange = new ArrayList<>();
 		WorldUtil.loop2D(world, (x, y, t) -> {
-			if(t.material == mTo){
-				if(t.orientation == FTileOrientation.UP_ARROW){
-					if(isInBounds(world, x, y - 1)) toChange.add(new HvlCoord(x, y - 1));
-					if(isInBounds(world, x - 1, y - 1)) toChange.add(new HvlCoord(x - 1, y - 1));
-					if(isInBounds(world, x + 1, y - 1)) toChange.add(new HvlCoord(x + 1, y - 1));
-					if(isInBounds(world, x - 1, y)) toChange.add(new HvlCoord(x - 1, y));
-					if(isInBounds(world, x - 2, y)) toChange.add(new HvlCoord(x - 2, y));
-					if(isInBounds(world, x + 1, y)) toChange.add(new HvlCoord(x + 1, y));
-					if(isInBounds(world, x + 2, y)) toChange.add(new HvlCoord(x + 2, y));
-					if(isInBounds(world, x, y + 1)) toChange.add(new HvlCoord(x, y + 1));
-					if(isInBounds(world, x - 1, y + 1)) toChange.add(new HvlCoord(x - 1, y + 1));
-					if(isInBounds(world, x - 2, y + 1)) toChange.add(new HvlCoord(x - 2, y + 1));
-					if(isInBounds(world, x + 1, y + 1)) toChange.add(new HvlCoord(x + 1, y + 1));
-					if(isInBounds(world, x + 2, y + 1)) toChange.add(new HvlCoord(x + 2, y + 1));
-				}else{
-					if(isInBounds(world, x, y + 1)) toChange.add(new HvlCoord(x, y + 1));
-					if(isInBounds(world, x - 1, y + 1)) toChange.add(new HvlCoord(x - 1, y + 1));
-					if(isInBounds(world, x + 1, y + 1)) toChange.add(new HvlCoord(x + 1, y + 1));
-					if(isInBounds(world, x - 1, y)) toChange.add(new HvlCoord(x - 1, y));
-					if(isInBounds(world, x - 2, y)) toChange.add(new HvlCoord(x - 2, y));
-					if(isInBounds(world, x + 1, y)) toChange.add(new HvlCoord(x + 1, y));
-					if(isInBounds(world, x + 2, y)) toChange.add(new HvlCoord(x + 2, y));
-					if(isInBounds(world, x, y - 1)) toChange.add(new HvlCoord(x, y - 1));
-					if(isInBounds(world, x - 1, y - 1)) toChange.add(new HvlCoord(x - 1, y - 1));
-					if(isInBounds(world, x - 2, y - 1)) toChange.add(new HvlCoord(x - 2, y - 1));
-					if(isInBounds(world, x + 1, y - 1)) toChange.add(new HvlCoord(x + 1, y - 1));
-					if(isInBounds(world, x + 2, y - 1)) toChange.add(new HvlCoord(x + 2, y - 1));
+			if(t != null){
+				if(t.material == mTo){
+					if(t.orientation == FTileOrientation.UP_ARROW){
+						if(isInBounds(world, x, y - 1)) toChange.add(new HvlCoord(x, y - 1));
+						if(isInBounds(world, x - 1, y - 1)) toChange.add(new HvlCoord(x - 1, y - 1));
+						if(isInBounds(world, x + 1, y - 1)) toChange.add(new HvlCoord(x + 1, y - 1));
+						if(isInBounds(world, x - 1, y)) toChange.add(new HvlCoord(x - 1, y));
+						if(isInBounds(world, x - 2, y)) toChange.add(new HvlCoord(x - 2, y));
+						if(isInBounds(world, x + 1, y)) toChange.add(new HvlCoord(x + 1, y));
+						if(isInBounds(world, x + 2, y)) toChange.add(new HvlCoord(x + 2, y));
+						if(isInBounds(world, x, y + 1)) toChange.add(new HvlCoord(x, y + 1));
+						if(isInBounds(world, x - 1, y + 1)) toChange.add(new HvlCoord(x - 1, y + 1));
+						if(isInBounds(world, x - 2, y + 1)) toChange.add(new HvlCoord(x - 2, y + 1));
+						if(isInBounds(world, x + 1, y + 1)) toChange.add(new HvlCoord(x + 1, y + 1));
+						if(isInBounds(world, x + 2, y + 1)) toChange.add(new HvlCoord(x + 2, y + 1));
+					}else{
+						if(isInBounds(world, x, y + 1)) toChange.add(new HvlCoord(x, y + 1));
+						if(isInBounds(world, x - 1, y + 1)) toChange.add(new HvlCoord(x - 1, y + 1));
+						if(isInBounds(world, x + 1, y + 1)) toChange.add(new HvlCoord(x + 1, y + 1));
+						if(isInBounds(world, x - 1, y)) toChange.add(new HvlCoord(x - 1, y));
+						if(isInBounds(world, x - 2, y)) toChange.add(new HvlCoord(x - 2, y));
+						if(isInBounds(world, x + 1, y)) toChange.add(new HvlCoord(x + 1, y));
+						if(isInBounds(world, x + 2, y)) toChange.add(new HvlCoord(x + 2, y));
+						if(isInBounds(world, x, y - 1)) toChange.add(new HvlCoord(x, y - 1));
+						if(isInBounds(world, x - 1, y - 1)) toChange.add(new HvlCoord(x - 1, y - 1));
+						if(isInBounds(world, x - 2, y - 1)) toChange.add(new HvlCoord(x - 2, y - 1));
+						if(isInBounds(world, x + 1, y - 1)) toChange.add(new HvlCoord(x + 1, y - 1));
+						if(isInBounds(world, x + 2, y - 1)) toChange.add(new HvlCoord(x + 2, y - 1));
+					}
 				}
 			}
 		});
 		for(HvlCoord c : toChange){
-			if(world[(int)c.x][(int)c.y].material == mFrom) world[(int)c.x][(int)c.y].material = mTo;
+			if(world[(int)c.x][(int)c.y] != null){
+				if(world[(int)c.x][(int)c.y].material == mFrom) world[(int)c.x][(int)c.y].material = mTo;
+			}else if(mFrom == null){
+				world[(int)c.x][(int)c.y] = new CTile((int)c.x, (int)c.y, mTo);
+			}
 		}
 	}
 
