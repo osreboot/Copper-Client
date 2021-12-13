@@ -57,8 +57,28 @@ public final class ForgeUtil {
 		}
 	}
 
-	private static boolean isInBounds(CTile[][] world, int x, int y){
+	public static boolean isInBounds(CTile[][] world, int x, int y){
 		return x >= 0 && x <= world.length - 1 && y >= 0 && y <= world[0].length - 1;
+	}
+
+	public static void smartSmooth(CTile[][] world, int xStart, int yStart, int xEnd, int yEnd){
+		for(int i = 0; i < 3; i++){
+			for(int x = xStart; x <= xEnd; x++){
+				for(int y = yStart; y <= yEnd; y++){
+					if(isInBounds(world, x, y) && world[x][y] != null){
+						int emptySides = 0;
+						if(world[x][y].orientation == FTileOrientation.UP_ARROW){
+							if(!isInBounds(world, x, y + 1) || world[x][y + 1] == null || !world[x][y + 1].material.solid) emptySides++;
+						}else{
+							if(!isInBounds(world, x, y - 1) || world[x][y - 1] == null || !world[x][y - 1].material.solid) emptySides++;
+						}
+						if(!isInBounds(world, x - 1, y) || world[x - 1][y] == null || !world[x - 1][y].material.solid) emptySides++;
+						if(!isInBounds(world, x + 1, y) || world[x + 1][y] == null || !world[x + 1][y].material.solid) emptySides++;
+						if(emptySides >= 2) world[x][y] = null;
+					}
+				}
+			}
+		}
 	}
 
 }

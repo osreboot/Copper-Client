@@ -21,7 +21,7 @@ public class ProcessPrimarySeedAsteroids {
 	SEED_RADIUS_BUFFER = 4f,
 	SEED_RADIUS_BUFFER_RANDOM = 16f,
 	SEED_RADIUS_MIN = 0f,
-	SEED_RADIUS_MAX = 10f,
+	SEED_RADIUS_MAX = 30f,
 	SPAWN_RADIUS = 2f;
 
 	public static final int

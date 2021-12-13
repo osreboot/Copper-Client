@@ -15,8 +15,8 @@ public final class SRender {
 	private SRender(){}
 
 	public static final float
-	SCALE_WORLD = 16f;
-//	SCALE_WORLD = 3f;
+//	SCALE_WORLD = 16f;
+	SCALE_WORLD = 3f;
 
 	public static void initialize(Environment environment){
 
