@@ -1,5 +1,6 @@
 package com.osreboot.copper.client.forge.primary;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 
@@ -10,6 +11,7 @@ import com.osreboot.copper.client.environment.feature.FTileMaterial;
 import com.osreboot.copper.client.environment.feature.FTileOrientation;
 import com.osreboot.copper.client.forge.ForgeTag;
 import com.osreboot.copper.client.forge.ForgeUtil;
+import com.osreboot.copper.client.forge.ForgeUtil.Ellipse;
 import com.osreboot.ridhvl2.HvlAction;
 import com.osreboot.ridhvl2.HvlCoord;
 import com.osreboot.ridhvl2.HvlMath;
@@ -39,7 +41,9 @@ public class ProcessPrimaryGrowAsteroids {
 					handleFillSolid(world, random, aabb, aLocation, aRadius);
 					handleDeformMinor(world, random, aabb, aLocation, aRadius);
 				}else{
-					handleFillSolid(world, random, aabb, aLocation, aRadius);
+//										aabb.loop(world, (x, y, t) -> { world[x][y] = new CTile(x, y, FTileMaterial.PATHWAY); });
+					handleFillSubtractive(world, random, aabb, aLocation, aRadius);
+					//					handleFillSolid(world, random, aabb, aLocation, aRadius);
 					ForgeUtil.smartSmooth(world, aabb.xMin, aabb.yMin, aabb.xMax, aabb.yMax);
 				}
 			}
@@ -67,6 +71,7 @@ public class ProcessPrimaryGrowAsteroids {
 
 	}
 
+	// Raw set by radius, no smooth
 	private static void handleFillSolid(CTile[][] world, Random random, AsteroidAABB aabb, HvlCoord aLocation, float aRadius){
 		aabb.loop(world, (x, y, t) -> {
 			if(HvlMath.distance(aLocation, WorldUtil.toEntitySpace(new HvlCoord(x, y))) < aRadius)
@@ -74,6 +79,94 @@ public class ProcessPrimaryGrowAsteroids {
 		});
 	}
 
+	private static void handleFillAdditive(CTile[][] world, Random random, AsteroidAABB aabb, HvlCoord aLocation, float aRadius){
+		// Randomly distribute ellipses around center point
+		ArrayList<Ellipse> ellipses = new ArrayList<>();
+		for(int i = 0; i < random.nextInt(3) + 1; i++){
+			float eAngle = random.nextFloat() * 360f;
+			float eRadius = aRadius / 2f;
+			HvlCoord eOffset = new HvlCoord(
+					(float)Math.cos(HvlMath.toRadians(eAngle)) * eRadius * 0.8f,
+					(float)Math.sin(HvlMath.toRadians(eAngle)) * eRadius * 0.8f);
+			Ellipse ellipse = new Ellipse(new HvlCoord(aLocation).subtract(eOffset), eRadius, random.nextFloat() * 0.8f + 0.2f, eAngle);
+			ellipses.add(ellipse);
+		}
+
+		// Center ellipses based on collective center-of-mass
+		HvlCoord ellipsesCenterOfMass = new HvlCoord();
+		float ellipsesTotalMass = 0f;
+		for(Ellipse ellipse : ellipses){
+			float eMass = (float)Math.PI * ellipse.radius * ellipse.radius * ellipse.ratio;
+			ellipsesTotalMass += eMass;
+			ellipsesCenterOfMass.add(new HvlCoord(ellipse.location).subtract(aLocation).multiply(eMass));
+		}
+		ellipsesCenterOfMass.divide(ellipsesTotalMass);
+		for(Ellipse ellipse : ellipses) ellipse.location.subtract(ellipsesCenterOfMass);
+
+		aabb.loop(world, (x, y, t) -> {
+			for(Ellipse ellipse : ellipses){
+				if(ellipse.isInside(WorldUtil.toEntitySpace(new HvlCoord(x, y)))){
+					world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
+					break;
+				}
+			}
+		});
+	}
+
+	private static void handleFillSubtractive(CTile[][] world, Random random, AsteroidAABB aabb, HvlCoord aLocation, float aRadius){
+		int ellipseCount = Math.max(5, Math.round(aRadius * (float)Math.PI * 2f / 5f));
+
+		ArrayList<Ellipse> ellipses = new ArrayList<>();
+		for(int i = 0; i < ellipseCount; i++){
+			float eRadius = random.nextFloat() * aRadius * (0.7f * (float)Math.pow(1f - 0.02f, aRadius) + 0.025f);
+			// float eRadius = random.nextFloat() * aRadius * 0.6f;
+			// float eOffsetAngle = random.nextFloat() * 360f;
+			float eOffsetAngle = HvlMath.map(i, 0f, ellipseCount, 0, 360f);
+			HvlCoord eOffset = new HvlCoord(
+					(float)Math.cos(HvlMath.toRadians(eOffsetAngle)) * aRadius,
+					(float)Math.sin(HvlMath.toRadians(eOffsetAngle)) * aRadius);
+			Ellipse ellipse = new Ellipse(new HvlCoord(aLocation).subtract(eOffset), eRadius, random.nextFloat() * 0.5f + 0.5f, random.nextFloat() * 360f);
+			ellipses.add(ellipse);
+		}
+
+		/*
+		aabb.loop(world, (x, y, t) -> {
+			boolean filled = false;
+			if(HvlMath.distance(aLocation, WorldUtil.toEntitySpace(new HvlCoord(x, y))) < aRadius) filled = true;
+			for(Ellipse ellipse : ellipses){
+				if(ellipse.isInside(WorldUtil.toEntitySpace(new HvlCoord(x, y)))){
+					filled = false;
+					break;
+				}
+			}
+			if(filled) world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
+		});*/
+		aabb.loop(world, (x, y, t) -> {
+			if(HvlMath.distance(aLocation, WorldUtil.toEntitySpace(new HvlCoord(x, y))) < aRadius){
+				HvlCoord loc = WorldUtil.toEntitySpace(new HvlCoord(x, y));
+				float value = 0f;
+				int samples = 0;
+				for(float xs = loc.x - 1f; xs <= loc.x + 1f; xs += 1f){
+					for(float ys = loc.y - 1f; ys <= loc.y + 1f; ys += 1f){
+						samples++;
+						boolean filled = true;
+						for(Ellipse ellipse : ellipses){
+							if(ellipse.isInside(new HvlCoord(xs, ys))){
+								filled = false;
+								break;
+							}
+						}
+						if(filled) value += 1f;
+					}
+				}
+				value /= (float)samples;
+
+				if(value >= 0.5f) world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
+			}
+		});
+	}
+
+	// Randomly delete border tiles then smooth
 	private static void handleDeformMinor(CTile[][] world, Random random, AsteroidAABB aabb, HvlCoord aLocation, float aRadius){
 		aabb.loop(world, (x, y, t) -> {
 			if(world[x][y] != null){

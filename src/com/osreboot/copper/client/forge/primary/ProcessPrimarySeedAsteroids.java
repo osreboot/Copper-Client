@@ -18,7 +18,7 @@ public class ProcessPrimarySeedAsteroids {
 	private ProcessPrimarySeedAsteroids(){}
 
 	public static final float
-	SEED_RADIUS_BUFFER = 4f,
+	SEED_RADIUS_BUFFER = 1f,
 	SEED_RADIUS_BUFFER_RANDOM = 16f,
 	SEED_RADIUS_MIN = 0f,
 	SEED_RADIUS_MAX = 30f,
@@ -69,8 +69,8 @@ public class ProcessPrimarySeedAsteroids {
 		// Populate selected seed tiles
 		for(SeedAsteroid seed : seeds){
 			HvlCoord tile = WorldUtil.toTileSpace(seed.location);
-			int x = Math.round(tile.x);
-			int y = Math.round(tile.y);
+			int x = (int)tile.x;
+			int y = (int)tile.y;
 			world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
 			worldTags[x][y].put(ForgeTag.SEED_ASTEROID, (double)seed.radius);
 		}
@@ -78,7 +78,7 @@ public class ProcessPrimarySeedAsteroids {
 	
 	// TODO exponential bias
 	private static float getRandomRadius(Random random){
-		return random.nextFloat() * (SEED_RADIUS_MAX - SEED_RADIUS_MIN) + SEED_RADIUS_MIN;
+		return (float)Math.pow(0.0005f, random.nextFloat()) * (SEED_RADIUS_MAX - SEED_RADIUS_MIN) + SEED_RADIUS_MIN;
 	}
 	
 	private static float getRandomBuffer(Random random){

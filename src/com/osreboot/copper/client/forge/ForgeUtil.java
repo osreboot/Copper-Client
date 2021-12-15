@@ -7,6 +7,7 @@ import com.osreboot.copper.client.environment.component.CTile;
 import com.osreboot.copper.client.environment.feature.FTileMaterial;
 import com.osreboot.copper.client.environment.feature.FTileOrientation;
 import com.osreboot.ridhvl2.HvlCoord;
+import com.osreboot.ridhvl2.HvlMath;
 
 public final class ForgeUtil {
 
@@ -81,4 +82,31 @@ public final class ForgeUtil {
 		}
 	}
 
+	public static class Ellipse{
+		
+		public HvlCoord location;
+		public float radius, ratio, rotation;
+		
+		public Ellipse(HvlCoord locationArg, float radiusArg, float ratioArg, float rotationArg){
+			location = locationArg;
+			radius = radiusArg;
+			ratio = ratioArg;
+			rotation = rotationArg;
+		}
+		
+		public float getRadius(float angle){
+			float a = radius;
+			float b = ratio * radius;
+			return (a * b) / (float)Math.sqrt(
+					a * a * (float)Math.sin(angle) * (float)Math.sin(angle) +
+					b * b * (float)Math.cos(angle) * (float)Math.cos(angle));
+		}
+		
+		public boolean isInside(HvlCoord locationArg){
+			float localAngle = HvlMath.toRadians(new HvlCoord(locationArg).subtract(location).angle() - rotation);
+			return HvlMath.distance(location, locationArg) < getRadius(localAngle);
+		}
+		
+	}
+	
 }
