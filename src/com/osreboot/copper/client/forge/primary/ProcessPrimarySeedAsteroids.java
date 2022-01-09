@@ -18,10 +18,10 @@ public class ProcessPrimarySeedAsteroids {
 	private ProcessPrimarySeedAsteroids(){}
 
 	public static final float
-	SEED_RADIUS_BUFFER = 1f,
-	SEED_RADIUS_BUFFER_RANDOM = 16f,
-	SEED_RADIUS_MIN = 0f,
-	SEED_RADIUS_MAX = 30f,
+	SEED_RADIUS_BUFFER = 2f,
+	SEED_RADIUS_BUFFER_RANDOM = 20f,
+	SEED_RADIUS_MIN = 0.4f,
+	SEED_RADIUS_MAX = 50f,
 	SPAWN_RADIUS = 2f;
 
 	public static final int

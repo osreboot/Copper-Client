@@ -11,17 +11,14 @@ import com.osreboot.copper.client.environment.feature.FTileMaterial;
 import com.osreboot.copper.client.environment.feature.FTileOrientation;
 import com.osreboot.copper.client.forge.ForgeTag;
 import com.osreboot.copper.client.forge.ForgeUtil;
+import com.osreboot.copper.client.forge.ForgeUtil.AsteroidAABB;
 import com.osreboot.copper.client.forge.ForgeUtil.Ellipse;
-import com.osreboot.ridhvl2.HvlAction;
 import com.osreboot.ridhvl2.HvlCoord;
 import com.osreboot.ridhvl2.HvlMath;
 
 public class ProcessPrimaryGrowAsteroids {
 
 	private ProcessPrimaryGrowAsteroids(){}
-
-	public static final float
-	BUFFER_RADIUS_AABB = 2f;
 
 	public static void run(TokenMetadata metadata, CTile[][] world, Map<ForgeTag, Double>[][] worldTags){
 		Random random = new Random(metadata.seedTerrain.hashCode() + 1);
@@ -31,8 +28,8 @@ public class ProcessPrimaryGrowAsteroids {
 				HvlCoord aLocation = WorldUtil.toEntitySpace(new HvlCoord(ax, ay));
 				float aRadius = worldTags[ax][ay].get(ForgeTag.SEED_ASTEROID).floatValue();
 
-				HvlCoord aabbMin = WorldUtil.toTileSpace(new HvlCoord(aLocation).subtract(aRadius + BUFFER_RADIUS_AABB, aRadius + BUFFER_RADIUS_AABB));
-				HvlCoord aabbMax = WorldUtil.toTileSpace(new HvlCoord(aLocation).add(aRadius + BUFFER_RADIUS_AABB, aRadius + BUFFER_RADIUS_AABB));
+				HvlCoord aabbMin = WorldUtil.toTileSpace(new HvlCoord(aLocation).subtract(aRadius + ForgeUtil.BUFFER_RADIUS_AABB, aRadius + ForgeUtil.BUFFER_RADIUS_AABB));
+				HvlCoord aabbMax = WorldUtil.toTileSpace(new HvlCoord(aLocation).add(aRadius + ForgeUtil.BUFFER_RADIUS_AABB, aRadius + ForgeUtil.BUFFER_RADIUS_AABB));
 				AsteroidAABB aabb = new AsteroidAABB((int)Math.floor(aabbMin.x), (int)Math.floor(aabbMin.y), (int)Math.ceil(aabbMax.x), (int)Math.ceil(aabbMax.y));
 
 				if(aRadius <= 0.8f){
@@ -41,34 +38,15 @@ public class ProcessPrimaryGrowAsteroids {
 					handleFillSolid(world, random, aabb, aLocation, aRadius);
 					handleDeformMinor(world, random, aabb, aLocation, aRadius);
 				}else{
-//										aabb.loop(world, (x, y, t) -> { world[x][y] = new CTile(x, y, FTileMaterial.PATHWAY); });
+					// aabb.loop(world, (x, y, t) -> { world[x][y] = new CTile(x, y, FTileMaterial.PATHWAY); });
 					handleFillSubtractive(world, random, aabb, aLocation, aRadius);
-					//					handleFillSolid(world, random, aabb, aLocation, aRadius);
 					ForgeUtil.smartSmooth(world, aabb.xMin, aabb.yMin, aabb.xMax, aabb.yMax);
+
+					//					handleFillCA(world, random, aabb, aLocation, aRadius);
+					//					ForgeUtil.smartSmooth(world, aabb.xMin, aabb.yMin, aabb.xMax, aabb.yMax);
 				}
 			}
 		});
-	}
-
-	private static class AsteroidAABB{
-
-		private final int xMin, yMin, xMax, yMax;
-
-		private AsteroidAABB(int xMinArg, int yMinArg, int xMaxArg, int yMaxArg){
-			xMin = xMinArg;
-			yMin = yMinArg;
-			xMax = xMaxArg;
-			yMax = yMaxArg;
-		}
-
-		private void loop(CTile[][] world, HvlAction.A3<Integer, Integer, CTile> action){
-			for(int x = xMin; x <= xMax; x++){
-				for(int y = yMin; y <= yMax; y++){
-					if(ForgeUtil.isInBounds(world, x, y)) action.run(x, y, world[x][y]);
-				}
-			}
-		}
-
 	}
 
 	// Raw set by radius, no smooth
@@ -76,40 +54,6 @@ public class ProcessPrimaryGrowAsteroids {
 		aabb.loop(world, (x, y, t) -> {
 			if(HvlMath.distance(aLocation, WorldUtil.toEntitySpace(new HvlCoord(x, y))) < aRadius)
 				world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
-		});
-	}
-
-	private static void handleFillAdditive(CTile[][] world, Random random, AsteroidAABB aabb, HvlCoord aLocation, float aRadius){
-		// Randomly distribute ellipses around center point
-		ArrayList<Ellipse> ellipses = new ArrayList<>();
-		for(int i = 0; i < random.nextInt(3) + 1; i++){
-			float eAngle = random.nextFloat() * 360f;
-			float eRadius = aRadius / 2f;
-			HvlCoord eOffset = new HvlCoord(
-					(float)Math.cos(HvlMath.toRadians(eAngle)) * eRadius * 0.8f,
-					(float)Math.sin(HvlMath.toRadians(eAngle)) * eRadius * 0.8f);
-			Ellipse ellipse = new Ellipse(new HvlCoord(aLocation).subtract(eOffset), eRadius, random.nextFloat() * 0.8f + 0.2f, eAngle);
-			ellipses.add(ellipse);
-		}
-
-		// Center ellipses based on collective center-of-mass
-		HvlCoord ellipsesCenterOfMass = new HvlCoord();
-		float ellipsesTotalMass = 0f;
-		for(Ellipse ellipse : ellipses){
-			float eMass = (float)Math.PI * ellipse.radius * ellipse.radius * ellipse.ratio;
-			ellipsesTotalMass += eMass;
-			ellipsesCenterOfMass.add(new HvlCoord(ellipse.location).subtract(aLocation).multiply(eMass));
-		}
-		ellipsesCenterOfMass.divide(ellipsesTotalMass);
-		for(Ellipse ellipse : ellipses) ellipse.location.subtract(ellipsesCenterOfMass);
-
-		aabb.loop(world, (x, y, t) -> {
-			for(Ellipse ellipse : ellipses){
-				if(ellipse.isInside(WorldUtil.toEntitySpace(new HvlCoord(x, y)))){
-					world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
-					break;
-				}
-			}
 		});
 	}
 
@@ -129,18 +73,6 @@ public class ProcessPrimaryGrowAsteroids {
 			ellipses.add(ellipse);
 		}
 
-		/*
-		aabb.loop(world, (x, y, t) -> {
-			boolean filled = false;
-			if(HvlMath.distance(aLocation, WorldUtil.toEntitySpace(new HvlCoord(x, y))) < aRadius) filled = true;
-			for(Ellipse ellipse : ellipses){
-				if(ellipse.isInside(WorldUtil.toEntitySpace(new HvlCoord(x, y)))){
-					filled = false;
-					break;
-				}
-			}
-			if(filled) world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
-		});*/
 		aabb.loop(world, (x, y, t) -> {
 			if(HvlMath.distance(aLocation, WorldUtil.toEntitySpace(new HvlCoord(x, y))) < aRadius){
 				HvlCoord loc = WorldUtil.toEntitySpace(new HvlCoord(x, y));
@@ -164,6 +96,62 @@ public class ProcessPrimaryGrowAsteroids {
 				if(value >= 0.5f) world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
 			}
 		});
+	}
+
+	private static void handleFillCA(CTile[][] world, Random random, AsteroidAABB aabb, HvlCoord aLocation, float aRadius){
+		// Initialize with random values
+		aabb.loop(world, (x, y, t) -> {
+			if(HvlMath.distance(aLocation, WorldUtil.toEntitySpace(new HvlCoord(x, y))) < aRadius){
+				HvlCoord loc = WorldUtil.toEntitySpace(new HvlCoord(x, y));
+				float fillChance = 0f;
+				if(HvlMath.distance(loc, aLocation) < aRadius * 0.7f) fillChance = 1f;
+				else if(HvlMath.distance(loc, aLocation) < aRadius) fillChance = 0.5f;
+				//				float fillChance = HvlMath.limit(HvlMath.map(HvlMath.distance(loc, aLocation), aRadius * 0.2f, aRadius, 1f, 0f), 0f, 1f);
+				if(random.nextFloat() < fillChance) world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
+			}
+		});
+
+		// Iterate based on cellular automata
+		for(int i = 0; i < 20; i++){
+			int[][] worldDelta = new int[world.length][world[0].length];
+			aabb.loop(world, (x, y, t) -> {
+				int emptySides = 0;
+				if(WorldUtil.getOrientation(x, y) == FTileOrientation.UP_ARROW){
+					if(ForgeUtil.isEmpty(world, x, y - 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 1, y - 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 1, y - 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 1, y)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 1, y)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 1, y)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 2, y)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x, y + 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 1, y + 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 2, y + 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 1, y + 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 2, y + 1)) emptySides++;
+				}else{
+					if(ForgeUtil.isEmpty(world, x, y + 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 1, y + 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 1, y + 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 1, y)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 1, y)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 1, y)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 2, y)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x, y - 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 1, y - 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x - 2, y - 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 1, y - 1)) emptySides++;
+					if(ForgeUtil.isEmpty(world, x + 2, y - 1)) emptySides++;
+				}
+
+				if(emptySides > 7) worldDelta[x][y] = -1;
+				if(emptySides < 6) worldDelta[x][y] = 1;
+			});
+			aabb.loop(world, (x, y, t) -> {
+				if(worldDelta[x][y] > 0) world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
+				else if(worldDelta[x][y] < 0) world[x][y] = null;
+			});
+		}
 	}
 
 	// Randomly delete border tiles then smooth

@@ -10,7 +10,7 @@ import com.osreboot.copper.client.environment.entity.EWorld;
 import com.osreboot.copper.client.environment.feature.FTileMaterial;
 import com.osreboot.copper.client.forge.ForgeUtil;
 import com.osreboot.copper.client.forge.ForgeTag;
-import com.osreboot.copper.client.forge.util.NoisePerlin;
+import com.osreboot.copper.client.forge.util.Noise2DPerlin;
 import com.osreboot.ridhvl2.HvlCoord;
 
 public final class ProcessPrimaryTerrain {
@@ -23,9 +23,9 @@ public final class ProcessPrimaryTerrain {
 		HvlCoord w0 = new HvlCoord(-EWorld.DIAMETER / 2f, -EWorld.DIAMETER / 2f);
 		HvlCoord w1 = new HvlCoord(EWorld.DIAMETER / 2f, EWorld.DIAMETER / 2f);
 
-		NoisePerlin nP1 = new NoisePerlin(random, 8, w0, w1);
-		NoisePerlin nP2 = new NoisePerlin(random, 13, w0, w1);
-		NoisePerlin nP3 = new NoisePerlin(random, 24, w0, w1);
+		Noise2DPerlin nP1 = new Noise2DPerlin(random, 8, w0, w1);
+		Noise2DPerlin nP2 = new Noise2DPerlin(random, 13, w0, w1);
+		Noise2DPerlin nP3 = new Noise2DPerlin(random, 24, w0, w1);
 
 		WorldUtil.loop2D(world, (x, y, t) -> {
 			HvlCoord c = WorldUtil.toEntitySpace(new HvlCoord(x, y));

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.osreboot.copper.client.TokenMetadata;
 import com.osreboot.copper.client.environment.WorldUtil;
 import com.osreboot.copper.client.environment.component.CTile;
+import com.osreboot.copper.client.forge.primary.ProcessPrimaryDamageAsteroids;
 import com.osreboot.copper.client.forge.primary.ProcessPrimaryGrowAsteroids;
 import com.osreboot.copper.client.forge.primary.ProcessPrimarySeedAsteroids;
 
@@ -22,6 +23,7 @@ public final class Forge {
 		
 		ProcessPrimarySeedAsteroids.run(metadata, world, worldTags);
 		ProcessPrimaryGrowAsteroids.run(metadata, world, worldTags);
+		ProcessPrimaryDamageAsteroids.run(metadata, world, worldTags);
 	}
 	
 }

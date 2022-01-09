@@ -3,16 +3,17 @@ package com.osreboot.copper.client.forge.util;
 import java.util.Random;
 
 import com.osreboot.copper.client.environment.WorldUtil;
+import com.osreboot.copper.client.forge.ForgeUtil;
 import com.osreboot.ridhvl2.HvlCoord;
 import com.osreboot.ridhvl2.HvlMath;
 
-public class NoisePerlin {
+public class Noise2DPerlin {
 
 	private HvlCoord m0, m1;
 
 	private HvlCoord[][] vectors;
 
-	public NoisePerlin(Random random, int gridSizeArg, HvlCoord m0Arg, HvlCoord m1Arg){
+	public Noise2DPerlin(Random random, int gridSizeArg, HvlCoord m0Arg, HvlCoord m1Arg){
 		m0 = m0Arg;
 		m1 = m1Arg;
 
@@ -39,16 +40,11 @@ public class NoisePerlin {
 		HvlCoord c3Offset = new HvlCoord(c.x - (float)Math.floor(c.x), c.y - (float)Math.ceil(c.y));
 		float c3Value = dot(c3Offset, vectors[(int)Math.floor(c.x)][(int)Math.ceil(c.y)]);
 
-		float c4Value = HvlMath.lerp(c0Value, c1Value, smoothstep(c0Offset.x));
-		float c5Value = HvlMath.lerp(c3Value, c2Value, smoothstep(c0Offset.x));
-		float c6Value = HvlMath.lerp(c4Value, c5Value, smoothstep(c0Offset.y));
+		float c4Value = HvlMath.lerp(c0Value, c1Value, ForgeUtil.smoothstep(c0Offset.x));
+		float c5Value = HvlMath.lerp(c3Value, c2Value, ForgeUtil.smoothstep(c0Offset.x));
+		float c6Value = HvlMath.lerp(c4Value, c5Value, ForgeUtil.smoothstep(c0Offset.y));
 
 		return c6Value;
-	}
-
-	// Algorithm source: https://en.wikipedia.org/wiki/Smoothstep | https://eev.ee/blog/2016/05/29/perlin-noise/ | http://adrianb.io/2014/08/09/perlinnoise.html
-	private static float smoothstep(float x){
-		return 6f * (float)Math.pow(x, 5f) - 15f * (float)Math.pow(x, 4f) + 10f * (float)Math.pow(x, 3f);
 	}
 
 	public static float dot(HvlCoord c0, HvlCoord c1){

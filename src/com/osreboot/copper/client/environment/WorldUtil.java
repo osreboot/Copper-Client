@@ -1,6 +1,7 @@
 package com.osreboot.copper.client.environment;
 
 import com.osreboot.copper.client.environment.entity.EWorld;
+import com.osreboot.copper.client.environment.feature.FTileOrientation;
 import com.osreboot.ridhvl2.HvlAction;
 import com.osreboot.ridhvl2.HvlCoord;
 
@@ -28,6 +29,10 @@ public final class WorldUtil {
 				action.run(x, y, objects[x][y]);
 			}
 		}
+	}
+	
+	public static FTileOrientation getOrientation(int x, int y){
+		return (x + y) % 2 == 0 ? FTileOrientation.UP_ARROW : FTileOrientation.DOWN_ARROW;
 	}
 	
 }

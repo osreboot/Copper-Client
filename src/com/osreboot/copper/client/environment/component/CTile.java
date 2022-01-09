@@ -32,7 +32,7 @@ public class CTile {
 
 		origin = WorldUtil.toEntitySpace(new HvlCoord(x, y));
 
-		orientation = (x + y) % 2 == 0 ? FTileOrientation.UP_ARROW : FTileOrientation.DOWN_ARROW;
+		orientation = WorldUtil.getOrientation(x, y);
 
 		faceVert = false;
 		faceWest = false;
