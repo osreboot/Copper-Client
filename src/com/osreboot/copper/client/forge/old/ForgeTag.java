@@ -1,4 +1,4 @@
-package com.osreboot.copper.client.forge;
+package com.osreboot.copper.client.forge.old;
 
 public enum ForgeTag {
 

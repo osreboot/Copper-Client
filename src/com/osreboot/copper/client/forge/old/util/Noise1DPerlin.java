@@ -1,8 +1,8 @@
-package com.osreboot.copper.client.forge.util;
+package com.osreboot.copper.client.forge.old.util;
 
 import java.util.Random;
 
-import com.osreboot.copper.client.forge.ForgeUtil;
+import com.osreboot.copper.client.forge.old.ForgeUtil;
 import com.osreboot.ridhvl2.HvlMath;
 
 public class Noise1DPerlin {

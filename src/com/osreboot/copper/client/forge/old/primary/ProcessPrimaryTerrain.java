@@ -1,4 +1,4 @@
-package com.osreboot.copper.client.forge.primary;
+package com.osreboot.copper.client.forge.old.primary;
 
 import java.util.Map;
 import java.util.Random;
@@ -8,9 +8,9 @@ import com.osreboot.copper.client.environment.WorldUtil;
 import com.osreboot.copper.client.environment.component.CTile;
 import com.osreboot.copper.client.environment.entity.EWorld;
 import com.osreboot.copper.client.environment.feature.FTileMaterial;
-import com.osreboot.copper.client.forge.ForgeUtil;
-import com.osreboot.copper.client.forge.ForgeTag;
-import com.osreboot.copper.client.forge.util.Noise2DPerlin;
+import com.osreboot.copper.client.forge.old.ForgeTag;
+import com.osreboot.copper.client.forge.old.ForgeUtil;
+import com.osreboot.copper.client.forge.old.util.Noise2DPerlin;
 import com.osreboot.ridhvl2.HvlCoord;
 
 public final class ProcessPrimaryTerrain {

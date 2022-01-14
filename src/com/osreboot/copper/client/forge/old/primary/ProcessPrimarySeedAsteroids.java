@@ -1,4 +1,4 @@
-package com.osreboot.copper.client.forge.primary;
+package com.osreboot.copper.client.forge.old.primary;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -9,7 +9,7 @@ import com.osreboot.copper.client.environment.WorldUtil;
 import com.osreboot.copper.client.environment.component.CTile;
 import com.osreboot.copper.client.environment.entity.EWorld;
 import com.osreboot.copper.client.environment.feature.FTileMaterial;
-import com.osreboot.copper.client.forge.ForgeTag;
+import com.osreboot.copper.client.forge.old.ForgeTag;
 import com.osreboot.ridhvl2.HvlCoord;
 import com.osreboot.ridhvl2.HvlMath;
 
