@@ -17,9 +17,10 @@ public final class GeneratorSurfaceProbability {
 	public static final float
 	SEED_RADIUS_BUFFER = 2f,
 	SEED_RADIUS_BUFFER_RANDOM = 20f,
-	SEED_RADIUS_MIN = 0.4f,
+	SEED_RADIUS_MIN = 3f,
 	SEED_RADIUS_MAX = 50f,
-	SPAWN_RADIUS = 2f;
+	SPAWN_RADIUS = 2f,
+	FIELD_SIZE_LIMIT = 16f;
 
 	public static final int
 	SEED_ATTEMPTS = 16;
@@ -76,11 +77,14 @@ public final class GeneratorSurfaceProbability {
 	}
 
 	private static float getProbabilityFromDistance(SeedAsteroid seed, float distance){
-		return HvlMath.limit(HvlMath.map(distance, seed.radius * 0.8f, seed.radius * 1.2f, 1f, 0f), 0f, 1f);
+		return HvlMath.limit(HvlMath.map(distance, 
+				Math.max(seed.radius * 0.5f, seed.radius - FIELD_SIZE_LIMIT), 
+				Math.min(seed.radius * 1.5f, seed.radius + FIELD_SIZE_LIMIT),
+				1f, 0f), 0f, 1f);
 	}
 	
 	private static float getRandomRadius(Random random){
-		return (float)Math.pow(0.0005f, random.nextFloat()) * (SEED_RADIUS_MAX - SEED_RADIUS_MIN) + SEED_RADIUS_MIN;
+		return (float)Math.pow(0.01f, random.nextFloat()) * (SEED_RADIUS_MAX - SEED_RADIUS_MIN) + SEED_RADIUS_MIN;
 	}
 
 	private static float getRandomBuffer(Random random){
