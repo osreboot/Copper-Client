@@ -13,6 +13,7 @@ public final class Forge {
 		Mask<Float> maskSurfaceProbability = GeneratorSurfaceProbability.run(metadata);
 		Mask<Boolean> maskSurfaceAnchors = GeneratorSurfaceAnchors.run(metadata, maskSurfaceProbability);
 		Mask<Boolean> maskSurface = GeneratorSurfaceMask.run(metadata, maskSurfaceProbability, maskSurfaceAnchors);
+		Mask<Integer> maskSurfaceDepth = GeneratorSurfaceDepth.run(metadata, maskSurface);
 		
 		ForgeUtil.smartSmooth(maskSurface);
 		

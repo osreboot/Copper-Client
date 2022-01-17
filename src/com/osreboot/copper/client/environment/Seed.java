@@ -20,7 +20,6 @@ public final class Seed {
 	public void generate(Environment environment){
 		EWorld world = new EWorld(environment);
 		
-		// OldForge.run(tokenMetadata, world.tiles);
 		Forge.run(tokenMetadata, world.tiles);
 		
 		WorldUtil.loop2D(world.tiles, (x, y, t) -> {
