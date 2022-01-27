@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.osreboot.copper.client.TokenMetadata;
 import com.osreboot.copper.client.forge.ForgeUtil.Mask;
 
-public class GeneratorSurfaceDepth {
+public final class GeneratorSurfaceDepth {
 
 	private GeneratorSurfaceDepth(){}
 

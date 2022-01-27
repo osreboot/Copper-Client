@@ -10,9 +10,9 @@ import com.osreboot.copper.client.forge.ForgeUtil.Mask;
 import com.osreboot.ridhvl2.HvlCoord;
 import com.osreboot.ridhvl2.HvlMath;
 
-public final class GeneratorSurfaceProbability {
+public final class GeneratorTerrainProbability {
 
-	private GeneratorSurfaceProbability(){}
+	private GeneratorTerrainProbability(){}
 
 	public static final float
 	SEED_RADIUS_BUFFER = 2f,
@@ -25,7 +25,7 @@ public final class GeneratorSurfaceProbability {
 	public static final int
 	SEED_ATTEMPTS = 16;
 
-	public static Mask<Float> run(TokenMetadata metadata){
+	public static GeneratorTerrainProbabilityOutput run(TokenMetadata metadata){
 		// (Voids) Initialize noise
 		Random randomVoids = new Random(metadata.seedVoids.hashCode());
 		Noise2DPerlin noiseVoids = new Noise2DPerlin(randomVoids, 5,
@@ -33,8 +33,6 @@ public final class GeneratorSurfaceProbability {
 				new HvlCoord(EWorld.DIAMETER * metadata.scaleVoids / 2f, EWorld.DIAMETER * metadata.scaleVoids / 2f));
 
 		Random randomTerrain = new Random(metadata.seedTerrain.hashCode());
-
-		Mask<Float> maskCellProbability = new Mask<>(0f);
 
 		// Select seeds based on Poisson disc sampling
 		ArrayList<SeedAsteroid> seedsActive = new ArrayList<>();
@@ -79,16 +77,27 @@ public final class GeneratorSurfaceProbability {
 		});
 
 		// Assign output mask probability values
+		Mask<Float> maskCellProbability = new Mask<>(0f);
+		Mask<Float> maskCaveProbability = new Mask<>(1f);
 		ForgeUtil.forWorld((x, y) -> {
 			HvlCoord tLocation = WorldUtil.toEntitySpace(new HvlCoord(x, y));
 			for(SeedAsteroid seed : seeds){
+				if(HvlMath.distance(seed.location, tLocation) < seed.radius && seed.radius < 3f) maskCaveProbability.set(x, y, 0f);
 				maskCellProbability.set(x, y, Math.min(maskCellProbability.get(x, y) + getProbabilityFromDistance(seed, HvlMath.distance(seed.location, tLocation)), 1f));
 			}
 		});
 
-		return maskCellProbability;
+		GeneratorTerrainProbabilityOutput output = new GeneratorTerrainProbabilityOutput();
+		output.maskSurfaceProbability = maskCellProbability;
+		output.maskCaveProbability = maskCaveProbability;
+		return output;
 	}
 
+	public static class GeneratorTerrainProbabilityOutput{
+		public Mask<Float> maskSurfaceProbability;
+		public Mask<Float> maskCaveProbability;
+	}
+	
 	private static float getProbabilityFromDistance(SeedAsteroid seed, float distance){
 		return HvlMath.limit(HvlMath.map(distance, 
 				Math.max(seed.radius * 0.5f, seed.radius - FIELD_SIZE_LIMIT), 
@@ -97,7 +106,7 @@ public final class GeneratorSurfaceProbability {
 	}
 
 	private static float getRandomRadius(Random random){
-		return (float)Math.pow(0.01f, random.nextFloat()) * (SEED_RADIUS_MAX - SEED_RADIUS_MIN) + SEED_RADIUS_MIN;
+		return (float)Math.pow(0.02f, random.nextFloat()) * (SEED_RADIUS_MAX - SEED_RADIUS_MIN) + SEED_RADIUS_MIN;
 	}
 
 	private static float getRandomBuffer(Random random){

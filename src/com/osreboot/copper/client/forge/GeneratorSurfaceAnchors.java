@@ -3,7 +3,7 @@ package com.osreboot.copper.client.forge;
 import com.osreboot.copper.client.TokenMetadata;
 import com.osreboot.copper.client.forge.ForgeUtil.Mask;
 
-public class GeneratorSurfaceAnchors {
+public final class GeneratorSurfaceAnchors {
 
 	private GeneratorSurfaceAnchors(){}
 	
