@@ -1,16 +1,17 @@
-package com.osreboot.copper.client.forge;
+package com.osreboot.copper.client.forge.old;
 
 import java.util.Random;
 
 import com.osreboot.copper.client.TokenMetadata;
-import com.osreboot.copper.client.forge.ForgeUtil.Mask;
+import com.osreboot.copper.client.forge.ForgeUtil;
+import com.osreboot.copper.client.forge.old.OldForgeUtil.Mask;
 
 public final class GeneratorSurfaceMask {
 
 	private GeneratorSurfaceMask(){}
 	
 	public static Mask<Boolean> run(TokenMetadata metadata, Mask<Float> maskSurfaceProbability, Mask<Boolean> maskSurfaceAnchors){
-		Random random = new Random(metadata.seedTerrain.hashCode() + 1);
+		Random random = new Random(metadata.seedAsteroids.hashCode() + 1);
 		
 		final Mask<Boolean> maskSurface = new Mask<>(false);
 		

@@ -8,7 +8,7 @@ public final class TokenMetadata implements Serializable{
 	public static final TokenMetadata DEV = new TokenMetadata("dev",
 			false, "dev", 1f);
 	
-	public String seedTerrain;
+	public String seedAsteroids;
 	
 	public boolean hasVoids;
 	public String seedVoids;
@@ -17,7 +17,7 @@ public final class TokenMetadata implements Serializable{
 	
 	public TokenMetadata(String seedTerrainArg,
 			boolean hasVoidsArg, String seedVoidsArg, float scaleVoidsArg){
-		seedTerrain = seedTerrainArg;
+		seedAsteroids = seedTerrainArg;
 		
 		hasVoids = hasVoidsArg;
 		seedVoids = seedVoidsArg;

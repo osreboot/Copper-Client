@@ -1,7 +1,8 @@
-package com.osreboot.copper.client.forge;
+package com.osreboot.copper.client.forge.old;
 
 import com.osreboot.copper.client.TokenMetadata;
-import com.osreboot.copper.client.forge.ForgeUtil.Mask;
+import com.osreboot.copper.client.forge.ForgeUtil;
+import com.osreboot.copper.client.forge.old.OldForgeUtil.Mask;
 
 public final class GeneratorSurfaceAnchors {
 

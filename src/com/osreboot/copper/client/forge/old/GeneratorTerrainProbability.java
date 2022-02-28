@@ -1,4 +1,4 @@
-package com.osreboot.copper.client.forge;
+package com.osreboot.copper.client.forge.old;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -6,7 +6,9 @@ import java.util.Random;
 import com.osreboot.copper.client.TokenMetadata;
 import com.osreboot.copper.client.environment.WorldUtil;
 import com.osreboot.copper.client.environment.entity.EWorld;
-import com.osreboot.copper.client.forge.ForgeUtil.Mask;
+import com.osreboot.copper.client.forge.ForgeUtil;
+import com.osreboot.copper.client.forge.Noise2DPerlin;
+import com.osreboot.copper.client.forge.old.OldForgeUtil.Mask;
 import com.osreboot.ridhvl2.HvlCoord;
 import com.osreboot.ridhvl2.HvlMath;
 
@@ -32,7 +34,7 @@ public final class GeneratorTerrainProbability {
 				new HvlCoord(EWorld.DIAMETER * metadata.scaleVoids / -2f, EWorld.DIAMETER * metadata.scaleVoids / -2f),
 				new HvlCoord(EWorld.DIAMETER * metadata.scaleVoids / 2f, EWorld.DIAMETER * metadata.scaleVoids / 2f));
 
-		Random randomTerrain = new Random(metadata.seedTerrain.hashCode());
+		Random randomTerrain = new Random(metadata.seedAsteroids.hashCode());
 
 		// Select seeds based on Poisson disc sampling
 		ArrayList<SeedAsteroid> seedsActive = new ArrayList<>();

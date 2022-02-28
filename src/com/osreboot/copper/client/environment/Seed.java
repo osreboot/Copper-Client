@@ -21,6 +21,7 @@ public final class Seed {
 		EWorld world = new EWorld(environment);
 		
 		Forge.run(tokenMetadata, world.tiles);
+		//OldForge.run(tokenMetadata, world.tiles);
 		
 		WorldUtil.loop2D(world.tiles, (x, y, t) -> {
 			if(x <= 1 || x >= EWorld.SIZE_X - 2 || y <= 0 || y >= EWorld.SIZE_Y - 1)

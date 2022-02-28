@@ -1,31 +1,37 @@
 package com.osreboot.copper.client.forge;
 
+import java.util.List;
+
 import com.osreboot.copper.client.TokenMetadata;
 import com.osreboot.copper.client.environment.component.CTile;
 import com.osreboot.copper.client.environment.feature.FTileMaterial;
 import com.osreboot.copper.client.forge.ForgeUtil.Mask;
-import com.osreboot.copper.client.forge.GeneratorTerrainProbability.GeneratorTerrainProbabilityOutput;
+import com.osreboot.copper.client.forge.planner.PlannerAsteroids;
+import com.osreboot.copper.client.forge.planner.PlannerCells;
+import com.osreboot.copper.client.forge.planner.PlannerVoids;
 
 public final class Forge {
 
 	private Forge(){}
 	
 	public static void run(TokenMetadata metadata, CTile[][] world){
-		GeneratorTerrainProbabilityOutput generatorTerrainProbabilityOutput = GeneratorTerrainProbability.run(metadata);
-		Mask<Float> maskSurfaceProbability = generatorTerrainProbabilityOutput.maskSurfaceProbability;
-		Mask<Float> maskCaveProbability = generatorTerrainProbabilityOutput.maskCaveProbability;
+		List<BlueprintAsteroid> blueprints = PlannerAsteroids.run(metadata);
+
+		PlannerVoids.run(metadata, blueprints);
 		
-		Mask<Boolean> maskSurfaceAnchors = GeneratorSurfaceAnchors.run(metadata, maskSurfaceProbability);
-		Mask<Boolean> maskSurface = GeneratorSurfaceMask.run(metadata, maskSurfaceProbability, maskSurfaceAnchors);
-		Mask<Integer> maskSurfaceDepth = GeneratorSurfaceDepth.run(metadata, maskSurface);
+		Mask<Cell> worldCells = PlannerCells.run(metadata, blueprints);
 		
-		Mask<Boolean> maskCaves = GeneratorCaveMask.run(metadata, maskSurface, maskSurfaceDepth, maskCaveProbability);
-		
-		ForgeUtil.smartSmooth(maskSurface);
+		for(int i = 0; i < 3; i++){
+			Mask<Cell> worldCellsNext = new Mask<>();
+			ForgeUtil.forWorld((x, y) -> {
+				worldCellsNext.set(x, y, worldCells.get(x, y).advance(0, worldCells));
+			});
+			worldCells.set(worldCellsNext);
+		}
 		
 		ForgeUtil.forWorld((x, y) -> {
-			if(maskSurface.get(x, y) && maskCaves.get(x, y)) world[x][y] = new CTile(x, y, FTileMaterial.PATHWAY);
-			else if(maskSurface.get(x, y)) world[x][y] = new CTile(x, y, FTileMaterial.ASTEROID);
+			FTileMaterial material = worldCells.get(x, y).evaluate();
+			if(material != null) world[x][y] = new CTile(x, y, material);
 		});
 	}
 	

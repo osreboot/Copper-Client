@@ -1,15 +1,17 @@
-package com.osreboot.copper.client.forge;
+package com.osreboot.copper.client.forge.old;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.osreboot.copper.client.environment.WorldUtil;
 import com.osreboot.copper.client.environment.entity.EWorld;
 import com.osreboot.copper.client.environment.feature.FTileOrientation;
 import com.osreboot.ridhvl2.HvlAction;
 
-public final class ForgeUtil {
+public final class OldForgeUtil {
 
-	private ForgeUtil(){}
+	private OldForgeUtil(){}
 
-	private static boolean isInWorld(int x, int y){
+	public static boolean isInWorld(int x, int y){
 		return x >= 0 && x < EWorld.SIZE_X && y >= 0 && y < EWorld.SIZE_Y;
 	}
 
@@ -55,6 +57,22 @@ public final class ForgeUtil {
 		if(isInWorld(x - 1, y)) action.run(x - 1, y);
 		if(isInWorld(x + 1, y)) action.run(x + 1, y);
 		if(isInWorld(x + 2, y)) action.run(x + 2, y);
+	}
+
+	public static void smartSmooth(Mask<Boolean> mask){
+		for(int i = 0; i < 5; i++){
+			Mask<Boolean> maskNew = new Mask<>(false);
+			forWorld((x, y) -> {
+				if(mask.get(x, y)){
+					AtomicInteger numberNeighbors = new AtomicInteger();
+					forDirectNeighbors(x, y, (nx, ny) -> {
+						if(mask.get(nx, ny)) numberNeighbors.incrementAndGet();
+					});
+					if(numberNeighbors.get() >= 2) maskNew.set(x, y, true);
+				}
+			});
+			mask.set(maskNew);
+		}
 	}
 
 	public static class Mask<T>{
